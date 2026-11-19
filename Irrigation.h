@@ -4,7 +4,7 @@
 #define FICHIER_H
 typedef struct
 {
-    int id_capt;
+    int id_capteur;
     float longtitude;
     float latitude;
     int id_parcelle;
@@ -41,19 +41,19 @@ void modifierCapteur(capteur capteurs[], int nbCapteurs);
 void supprimerCapteur(capteur capteurs[],int *nbc,int pos);
 void afficherCapteurs(capteur capteurs[],int nbc);
 
-void declencherReleve();
-void simulerCampagne();
-void afficherDernierEtat();
+void enregistrerReleve(int id_capteur, float humidite,Historique releves[], int *nbR);
+void declencherReleve(capteur capteurs[], int nbc,parcelle parcelles[], int nbP,Historique releves[], int *nbR);
+void simulerCampagne(parcelle parcelles[], int nbP,capteur capteurs[], int nbC,Historique releves[], int *nbR);
+void afficherDernierEtat(capteur capteurs[], int nbC,Historique releves[], int nbR);
 
-void consulterHistorique();
-float calculerMoyenne();
-float calculerMinimum();
-float calculerMaximum();
+void consulterHistorique(Historique releves[],int nbR);
+float calculerMoyenne(Historique releves[],int nbR);
+float calculerMinimum(Historique releves[],int nbR);
+float calculerMaximum(Historique releves[],int nbR);
+void afficherParcellesPrioritaires(parcelle parcelles[], int nbP,capteur capteurs[], int nbC,Historique releves[], int nbR)
 void trierReleves();
 void rechercherCapteurParID(int id);
 void rechercherCapteurParCoordonnes(float longitude,float latitude);
-
-
 
 void sauvegarderParcelles();
 void sauvegarderCapteurs();
@@ -64,8 +64,6 @@ void quitter();
 
 #endif
 #endif
-
-
 
 
 
