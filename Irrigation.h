@@ -1,69 +1,78 @@
 #ifndef IRRIGATION_H_INCLUDED
 #define IRRIGATION_H_INCLUDED
-#ifndef FICHIER_H
-#define FICHIER_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+
+
+/* ==================== STRUCTURES ==================== */
 typedef struct
 {
     int id_capteur;
-    float longtitude;
+    float longitude;
     float latitude;
     int id_parcelle;
     int etat;
-}capteur;
+} capteur;
 
 typedef struct
 {
     int id_parcelle;
     char nom_parcelle[20];
-    capteur tabcapteurs[10];
+    capteur capteurs[10];
     float seuil_irrigation_min;
     int nb_capteur;
-}parcelle;
+} parcelle;
 
 typedef struct
 {
     int id_releve;
-    int id_captuer;
+    int id_capteur;
     char date_hr[20];
     float val_hum;
-}Historique;
+} Historique;
 
-
-int rechercherParcelleParID(parcelle parcelles[], int n, int id)
+/* ==================== GESTION DES PARCELLES ==================== */
+int rechercherParcelleParID(parcelle parcelles[], int nbp, int id);
 void ajouterParcelle(parcelle parcelles[],int*nbp);
 void modifierParcelle(parcelle parcelles[], int nbp);
 void supprimerParcelle(parcelle parcelles[], int *nbp, int pos);
-void afficherParcelles(parcelle parcelles[],int nbp);
+void afficherParcelles(parcelle parcelles[],int nbp,capteur capteurs[],int nbC);
 
-int rechercherCapteurParID(capteur capteurs[], int n, int id)
-void ajouterCapteur(capteur capteurs[],int *nbc);
-void modifierCapteur(capteur capteurs[], int nbCapteurs);
-void supprimerCapteur(capteur capteurs[],int *nbc,int pos);
-void afficherCapteurs(capteur capteurs[],int nbc);
+/* ==================== GESTION DES CAPTEURS ==================== */
+void ajouterCapteur(capteur capteurs[],int *nb_capteur);
+void modifierCapteur(capteur capteurs[], int nb_capteur);
+void supprimerCapteur(capteur capteurs[],int *nb_capteur,int pos);
+void afficherCapteurs(capteur capteurs[],int nb_capteur);
+
+/* ==================== RELEVES ET SIMULATION ==================== */
 
 void enregistrerReleve(int id_capteur, float humidite,Historique releves[], int *nbR);
 void declencherReleve(capteur capteurs[], int nbc,parcelle parcelles[], int nbP,Historique releves[], int *nbR);
 void simulerCampagne(parcelle parcelles[], int nbP,capteur capteurs[], int nbC,Historique releves[], int *nbR);
 void afficherDernierEtat(capteur capteurs[], int nbC,Historique releves[], int nbR);
 
+/* ==================== STATISTIQUES ET HISTORIQUE ==================== */
 void consulterHistorique(Historique releves[],int nbR);
 float calculerMoyenne(Historique releves[],int nbR);
 float calculerMinimum(Historique releves[],int nbR);
 float calculerMaximum(Historique releves[],int nbR);
-void afficherParcellesPrioritaires(parcelle parcelles[], int nbP,capteur capteurs[], int nbC,Historique releves[], int nbR)
-void trierReleves();
-void rechercherCapteurParID(int id);
-void rechercherCapteurParCoordonnes(float longitude,float latitude);
+void afficherParcellesPrioritaires(parcelle parcelles[], int nbP,capteur capteurs[], int nbC,Historique releves[], int nbR);
+void trierReleves(Historique releves[], int nbR);
+void rechercherCapteurParID(int id,capteur capteurs[], int nbC);
+void rechercherCapteurParCoordonnes(float longitude,float latitude,capteur capteurs[], int nbC);
 
-void sauvegarderParcelles();
-void sauvegarderCapteurs();
-void sauvegarderReleves();
+/* ==================== SAUVEGARDE ==================== */
+void sauvegarderParcelles(parcelle parcelles[], int nbp);
+void sauvegarderCapteurs(capteur capteurs[], int nbC);
+void sauvegarderReleves(Historique releves[],int nbR);
 
-void quitter();
+void quitter(parcelle parcelles[], int nbP, capteur capteurs[], int nbC, Historique releves[], int nbR);
 
 
 #endif
-#endif
+
 
 
 
