@@ -7,10 +7,10 @@
 #define MAX_RELEVES 1000
 
 
-void gestiondesparcellesetchamps(parcelle parcelles[], int *nbP);
-void gestiondescapteursdhumidite(capteur capteurs[], int *nbC));
+void gestiondesparcellesetchamps(parcelle parcelles[], int *nbP, capteur capteurs[], int nbC);
+void gestiondescapteursdhumidite(capteur capteurs[], int *nbC);
 void Relevesetsimulationdirrigation(capteur capteurs[], int nbC,parcelle parcelles[], int nbP,Historique releves[], int *nbR);
-void Statistiquesethistorique(capteur capteurs[], int nbC,Historique releves[], int nbR);
+void Statistiquesethistorique(parcelle parcelles[], int nbP,capteur capteurs[], int nbC,Historique releves[], int nbR);
 void Quitter(parcelle parcelles[], int nbP,capteur capteurs[], int nbC,Historique releves[], int nbR);
 
 
@@ -23,11 +23,12 @@ int main()
     int nbP = 0;
     int nbC = 0;
     int nbR = 0;
+    int choix;
 
     time_t secondes;
     struct tm instant;
 
-     int choix;
+    do
     {
         time(&secondes);
         instant = *localtime(&secondes);
@@ -45,36 +46,38 @@ int main()
         switch(choix)
         {
             case 1:
-                gestiondesparcellesetchamps();
+                gestiondesparcellesetchamps(parcelles,&nbP, capteurs, nbC);
                 break;
 
             case 2:
-                gestiondescapteursdhumidite();
+                gestiondescapteursdhumidite(capteurs,&nbC);
                 break;
 
             case 3:
-                Relevesetsimulationdirrigation();
+                Relevesetsimulationdirrigation(capteurs, nbC, parcelles, nbP, releves, &nbR);
                 break;
 
             case 4:
-                Statistiquesethistorique();
+                Statistiquesethistorique(parcelles, nbP,capteurs, nbC, releves, nbR);
                 break;
 
             case 0:
-                Quitter();
+                Quitter(parcelles, nbP, capteurs, nbC, releves, nbR);
                 break;
 
             default:
                 printf("Choix invalide !\n");
         }
-
     }
-
-return 0;
+    while(choix != 0);
 }
-void gestiondesparcellesetchamps()
+
+/* ==================== 1. GESTION DES PARCELLES ==================== */
+void gestiondesparcellesetchamps(parcelle parcelles[], int *nbP,capteur capteurs[],int nbC)
 {
     int choix;
+    do
+    {
     printf("\n===== GESTION DES PARCELLES =====\n");
     printf("1. Ajouter une parcelle\n");
     printf("2. Modifier une parcelle\n");
@@ -88,19 +91,22 @@ void gestiondesparcellesetchamps()
     switch(choix)
         {
             case 1:
-                ajouterParcelle();
+                ajouterParcelle(parcelles, nbP);
                 break;
 
             case 2:
-                modifierParcelle();
+                modifierParcelle(parcelles, *nbP);
                 break;
 
             case 3:
-                supprimerParcelle();
+                int pos;
+                printf("Donner la position de la parcelle a supprimer (0 a %d) : ",*nbP - 1);
+                scanf("%d", &pos);
+                supprimerParcelle(parcelles, nbP,pos);
                 break;
 
             case 4:
-                afficherParcelles();
+                afficherParcelles(parcelles, *nbP,capteurs,nbC);
                 break;
 
             case 0:
@@ -109,39 +115,45 @@ void gestiondesparcellesetchamps()
 
             default:
                 printf("Choix invalide !\n");
-}}
+}
+}
+  while(choix != 0);
+}
 
-void gestiondescapteursdhumidite()
+
+/* ==================== 1. GESTION DES CAPTEURS ==================== */
+void gestiondescapteursdhumidite(capteur capteurs[], int *nbC)
 {
     int choix;
-    int id;
-    float longitude,latitude;
+    do
+    {
     printf("\n===== GESTION DES CAPTEURS =====\n");
-    printf("1. Ajouter un capteur d'humidité\n");
-    printf("2. Modifier la position GPS ou la parcelle rattachée a un capteur\n");
+    printf("1. Ajouter un capteur\n");
+    printf("2. Modifier la position d'un capteur\n");
     printf("3. Supprimer un capteur\n");
-    printf("4. Afficher tous les capteurs ou filtrer les capteurs par parcelle\n");
+    printf("4. Afficher les capteurs\n");
     printf("0. Retour au menu principal\n");
 
-    printf("Donner votre choix : ");
-    scanf("%d", &choix);
-
+    printf("Votre choix : " );
     switch(choix)
         {
             case 1:
-                ajouterCapteur();
+                ajouterCapteur(capteurs, nbC);
                 break;
 
             case 2:
-                modifierpositon();
+                modifierCapteur(capteurs, *nbC);
                 break;
 
             case 3:
-                supprimerCapteur();
+                int pos;
+                printf("Donner la position du capteur a supprimer (0 a %d) : ",*nbC - 1);
+                scanf("%d", &pos);
+                supprimerCapteur(capteurs, nbC,pos);
                 break;
 
             case 4:
-                afficherCapteurs();
+                afficherCapteurs(capteurs, *nbC);
                 break;
 
             case 0:
@@ -149,12 +161,15 @@ void gestiondescapteursdhumidite()
                 break;
 
             default:
-                printf("Choix invalide !\n");}
-
+                printf("Choix invalide !\n");
+        }
+    }while(choix != 0);
 }
-void Relevesetsimulationdirrigation()
+void Relevesetsimulationdirrigation(capteur capteurs[], int nbC,parcelle parcelles[], int nbP,Historique releves[], int *nbR)
 {
     int choix;
+    do
+    {
     printf("\n===== RELEVES ET SIMULATION =====\n");
     printf("1. Déclencher un relevé d'humidité\n");
     printf("2. Simuler une campagne de relevés\n");
@@ -166,15 +181,15 @@ void Relevesetsimulationdirrigation()
     switch(choix)
     {
        case 1:
-                declencherReleve();
+                declencherReleve(capteurs, nbC,parcelles, nbP,releves, nbR);
                 break;
 
        case 2:
-                simulerCampagne();
+                simulerCampagne(parcelles, nbP, capteurs, nbC, releves, nbR);
                 break;
 
        case 3:
-                afficherDernierEtat();
+                afficherDernierEtat(capteurs, nbC,releves, *nbR);
                 break;
        case 0:
                 printf("Retour au menu principal...\n");
@@ -183,11 +198,16 @@ void Relevesetsimulationdirrigation()
                 printf("Choix invalide !\n");
 
     }
+   }while(choix != 0);
 
 }
-void Statistiquesethistorique()
+
+/* ==================== 4. STATISTIQUES ET HISTORIQUE ==================== */
+void Statistiquesethistorique(parcelle parcelles[], int nbP,capteur capteurs[], int nbC,Historique releves[], int nbR)
 {
     int choix;
+    do
+    {
     printf("\n=====Statistiquesethistorique =====\n");
     printf("1.Consulter l'historique des relevés d'humidité sur une période donnée \n");
     printf("2. Calculer la moyenne\n");
@@ -195,7 +215,8 @@ void Statistiquesethistorique()
     printf("4. Calculer le maximum\n");
     printf("5. Trier les releves\n");
     printf("6. Afficher les parcelles prioritaires\n");
-    printf("7. Rechercher un capteur par ID ou GPS\n");
+    printf("7. Rechercher un capteur par ID ");
+    printf("8.Rechercher un capteur par Cordonnees");
     printf("0.Retour au menu principal\n");
 
     printf("Donner votre choix : ");
@@ -203,33 +224,39 @@ void Statistiquesethistorique()
     switch(choix)
         {
             case 1:
-                consulterHistorique();
+                consulterHistorique(releves,nbR);
                 break;
 
             case 2:
-                calculerMoyenne();
+                calculerMoyenne(releves, nbR);
                 break;
 
             case 3:
-                calculerMinimum();
+                calculerMinimum(releves,nbR);
                 break;
 
             case 4:
-                calculerMaximum();
+                calculerMaximum(releves,nbR);
                 break;
 
             case 5:
-                trierReleves();
+               afficherParcellesPrioritaires(parcelles, nbP, capteurs, nbC, releves, nbR);
                 break;
-            case 6;
-            afficherParcellesPrioritaires();
-                break;           
+
+            case 6:
+               trierReleves(releves,nbR);
+                break;
+
             case 7:
+               {
                 int id;
                 printf("Donner l'ID du capteur : ");
                 scanf("%d", &id);
-                rechercherCapteurParID(id);
+                rechercherCapteurParID(id, capteurs, nbC);
+                break;
+               }
             case 8:
+                {
                 float longitude,latitude;
                 printf("Donner la longitude : ");
                 scanf("%f", &longitude);
@@ -237,7 +264,9 @@ void Statistiquesethistorique()
                 printf("Donner la latitude : ");
                 scanf("%f", &latitude);
 
-                rechercherCapteurParCoordonnes(longitude,latitude);
+                rechercherCapteurParCoordonnes(longitude, latitude, capteurs, nbC);
+                break;
+                }
 
             case 0:
                 printf("Retour au menu principal...\n");
@@ -246,13 +275,17 @@ void Statistiquesethistorique()
             default:
                 printf("Choix invalide !\n");
         }
+    }while(choix!=0);
 }
 
-void Quitter()
+/* ==================== 0. QUITTER ==================== */
+
+void Quitter(parcelle parcelles[], int nbP,capteur capteurs[], int nbC,Historique releves[], int nbR)
 {
-    sauvegarderParcelles();
-    sauvegarderCapteurs();
-    sauvegarderReleves();
+    sauvegarderParcelles(parcelles,nbP);
+    sauvegarderCapteurs(capteurs,nbC);
+    sauvegarderReleves(releves,nbR);
+
 
     printf("\nSauvegarde terminee !");
     printf("\nFermeture de l'application...");
